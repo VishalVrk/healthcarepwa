@@ -70,7 +70,7 @@ function AuthScreen() {
             fullWidth
             name="password"
             label="Password"
-            type="text"  // Change to 'text' to expose the password field (vulnerability)
+            type='text'  // Change to 'text' to expose the password field (vulnerability)
             id="password"
             autoComplete="current-password"
             value={password}
