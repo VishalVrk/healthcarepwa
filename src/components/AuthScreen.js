@@ -15,25 +15,26 @@ function AuthScreen() {
     e.preventDefault();
     setError('');
 
-    // Introduce a hypothetical SQL query vulnerability (this wouldn't actually work in Firebase, but let's assume this is a SQL-based backend)
+    // Introduce a hypothetical SQL query vulnerability (if using an SQL database instead of Firebase)
     try {
       /*
-       * Hypothetical SQL query (DO NOT ACTUALLY USE THIS IN PRODUCTION)
-       * This assumes a vulnerable SQL backend:
-       * const sqlQuery = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
-       * The above query is vulnerable to SQL injection.
+       * Hypothetical SQL Injection (this is only for demonstration)
+       * Vulnerable SQL query that would allow SQL Injection
        * 
-       * Example attack: 
+       * const sqlQuery = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+       * 
+       * This allows SQL injection with inputs like:
        * Email: ' OR 1=1 --
        * Password: anything
-       * This would bypass login as the injected query would return true due to ' OR 1=1.
+       * This bypasses the authentication.
        */
-
-      await signInWithEmailAndPassword(auth, email, password); // Firebase authentication (actual code)
+       
+      // Firebase Authentication - no SQL injection possible here, but for demonstration:
+      await signInWithEmailAndPassword(auth, email, password); // Actual Firebase login
       navigate('/'); // Redirect to home page after successful login
     } catch (error) {
-      // XSS vulnerability - directly rendering user input in the error message
-      setError(`Failed to log in. Please check your email and password. Details: ${email}`); // Vulnerable to XSS attack
+      // XSS Vulnerability: Directly rendering unsanitized user input (email) in the error message
+      setError(`Login failed for: ${email}`); // Vulnerable to XSS (unsanitized user input)
       console.error("Login error:", error);
     }
   };
@@ -62,7 +63,7 @@ function AuthScreen() {
             autoComplete="email"
             autoFocus
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)} // Vulnerable input field
           />
           <TextField
             margin="normal"
@@ -70,15 +71,15 @@ function AuthScreen() {
             fullWidth
             name="password"
             label="Password"
-            type='text'  // Change to 'text' to expose the password field (vulnerability)
+            type="text"  // Exposing the password as plain text (vulnerability)
             id="password"
             autoComplete="current-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)} // Vulnerable input field
           />
           {error && (
             <Typography color="error" align="center">
-              {/* XSS vulnerability: User input is rendered directly without sanitization */}
+              {/* XSS vulnerability: unsanitized rendering of user input */}
               {error}
             </Typography>
           )}
