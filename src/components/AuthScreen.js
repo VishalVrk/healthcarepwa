@@ -14,11 +14,26 @@ function AuthScreen() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Introduce a hypothetical SQL query vulnerability (this wouldn't actually work in Firebase, but let's assume this is a SQL-based backend)
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      /*
+       * Hypothetical SQL query (DO NOT ACTUALLY USE THIS IN PRODUCTION)
+       * This assumes a vulnerable SQL backend:
+       * const sqlQuery = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+       * The above query is vulnerable to SQL injection.
+       * 
+       * Example attack: 
+       * Email: ' OR 1=1 --
+       * Password: anything
+       * This would bypass login as the injected query would return true due to ' OR 1=1.
+       */
+
+      await signInWithEmailAndPassword(auth, email, password); // Firebase authentication (actual code)
       navigate('/'); // Redirect to home page after successful login
     } catch (error) {
-      setError('Failed to log in. Please check your email and password.');
+      // XSS vulnerability - directly rendering user input in the error message
+      setError(`Failed to log in. Please check your email and password. Details: ${email}`); // Vulnerable to XSS attack
       console.error("Login error:", error);
     }
   };
@@ -55,7 +70,7 @@ function AuthScreen() {
             fullWidth
             name="password"
             label="Password"
-            type="password"
+            type="text"  // Change to 'text' to expose the password field (vulnerability)
             id="password"
             autoComplete="current-password"
             value={password}
@@ -63,6 +78,7 @@ function AuthScreen() {
           />
           {error && (
             <Typography color="error" align="center">
+              {/* XSS vulnerability: User input is rendered directly without sanitization */}
               {error}
             </Typography>
           )}
