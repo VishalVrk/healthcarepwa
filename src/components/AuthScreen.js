@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Box } from '@mui/material';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import axios from 'axios';
 
 function AuthScreen() {
   const [email, setEmail] = useState('');
@@ -16,21 +15,14 @@ function AuthScreen() {
     setError('');
 
     try {
-      // Hypothetical SQL Injection (this is only for demonstration)
-      // Vulnerable SQL query that would allow SQL Injection
-      // const sqlQuery = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+      // Call the new vulnerable backend API (SQL injection vulnerability)
+      const response = await axios.post('http://localhost:3001/login', { email, password });
 
-      // No sanitization of inputs, leaving it open to XSS attacks
-      alert(`Welcome ${email}`);  // XSS vulnerability: Directly using user input in alert
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          navigate('/home');
-        })
-        .catch(err => {
-          setError(err.message);
-        });
-    } catch (error) {
-      setError('Login failed.');
+      alert(response.data);  // Show the server response
+
+      navigate('/home');
+    } catch (err) {
+      setError('Failed to log in. Please check your email and password.');
     }
   };
 
